@@ -64,16 +64,6 @@ def forward(pi, T, E, sym2pair, preprocessed_obs, orig_nsyms, nsyms):
     return _forward(pi, T, E, preprocessed_obs, sym2mat, sym2scale)
 
 
-def _add_count(pair_counts, seq, idx, counted, nsyms):
-    p_prev = seq[idx-1] * nsyms + seq[idx]
-    p = seq[idx] * nsyms + seq[idx+1]
-    if not counted or p_prev != p:
-        pair_counts[p] += 1
-        return True
-    else:
-        return False
-
-
 def preprocess_raw_observations(obs, nsyms):
     sym2pair = dict()
     prev_max_count = -1
@@ -81,7 +71,6 @@ def preprocess_raw_observations(obs, nsyms):
         pair_counts = np.zeros(nsyms**2, dtype=np.int32)
         counted = True
         for idx in xrange(1, len(obs)-1):
-            # counted = _add_count(pair_counts, obs, i, counted, nsyms)
             p_prev = obs[idx-1] * nsyms + obs[idx]
             p = obs[idx] * nsyms + obs[idx+1]
             if not counted or p_prev != p:
