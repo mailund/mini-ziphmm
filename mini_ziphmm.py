@@ -76,7 +76,6 @@ def _add_count(pair_counts, seq, idx, counted, nsyms):
 
 def preprocess_raw_observations(obs, nsyms):
     sym2pair = dict()
-    done = False
     prev_max_count = -1
     while True:
         pair_counts = np.zeros(nsyms**2, dtype=np.int32)
