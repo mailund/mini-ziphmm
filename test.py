@@ -92,4 +92,4 @@ except:
     pass
 
 for (name, L, t) in results:
-    print "{0:<20} {1:15} in {2:0.2f}ms".format(name, L, 1e3*t)
+    print "{0:<20} {1:15.4f} in {2:0.2f}ms".format(name, L, 1e3*t)
