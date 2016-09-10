@@ -50,7 +50,7 @@ def preprocess_raw_observations(
         np.ndarray[np.int32_t, ndim=1] obs,
         np.int nsyms):
     cdef:
-        np.int32_t counted, p_prev, p, new_sym
+        np.int32_t counted_last_pair, p_prev, p, new_sym
         np.int32_t max_pair, max_pair_left, max_pair_right, max_pair_count
         size_t idx, i, j
         size_t obs_len
@@ -61,16 +61,16 @@ def preprocess_raw_observations(
     obs_len = len(obs)
     while True:
         pair_counts = np.zeros(nsyms**2, dtype=np.int32)
-        counted = 1
+        counted_last_pair = 1
         idx = 1
         while idx < obs_len - 1:
             p_prev = obs[idx-1] * nsyms + obs[idx]
             p = obs[idx] * nsyms + obs[idx+1]
-            if counted != 0 or p_prev != p:
+            if counted_last_pair == 0 or p_prev != p:
                 pair_counts[p] += 1
-                counted = 1
+                counted_last_pair = 1
             else:
-                counted = 0
+                counted_last_pair = 0
             idx += 1
         max_pair = pair_counts.argmax()
         max_pair_count = pair_counts[max_pair]
