@@ -29,9 +29,11 @@ obs = np.array(np.random.choice(range(NSYM), 1000), dtype=np.int32)
 # print "B:", np.isclose(B, B2).all()
 # print "C:", np.isclose(C, C2).all()
 
-t_weave = time()
-A, C, logL = mini_hmm_weave.calc_forward(pi, T, E, obs)
-t_weave = time() - t_weave
+# Disregard the first time where it compiles/loads the C code
+for _ in xrange(2):
+    t_weave = time()
+    A, C, logL = mini_hmm_weave.calc_forward(pi, T, E, obs)
+    t_weave = time() - t_weave
 
 t_cython = time()
 A2, C2, logL2 = mini_hmm_cython.calc_forward(pi, T, E, obs)
