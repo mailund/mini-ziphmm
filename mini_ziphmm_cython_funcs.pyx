@@ -16,7 +16,6 @@ def _forward(
         np.ndarray[double, ndim=3] sym2mat,
         np.ndarray[double, ndim=1] sym2scale):
     cdef:
-        np.ndarray[double, ndim=2] mat
         np.ndarray[double, ndim=1] tmp, res
         np.int32_t o
         size_t i, j, k, N, obs_len
