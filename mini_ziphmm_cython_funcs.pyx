@@ -47,7 +47,7 @@ def _forward(
 
 def preprocess_raw_observations(
         np.ndarray[np.int32_t, ndim=1] obs,
-        np.int nsyms):
+        np.int32_t nsyms):
     cdef:
         np.int32_t counted_last_pair, p_prev, p, new_sym
         np.int32_t max_pair, max_pair_left, max_pair_right, max_pair_count
