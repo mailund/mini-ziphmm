@@ -7,6 +7,7 @@ import mini_ziphmm_cython_funcs as c
 preprocess_raw_observations = c.preprocess_raw_observations
 hmm_baum_welch = c.hmm_baum_welch
 hmm_forward_backward = c.hmm_forward_backward
+hmm_viterbi = c.hmm_viterbi
 
 
 def _apply_em_prob(T, E, symbol):

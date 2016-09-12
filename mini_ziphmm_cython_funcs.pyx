@@ -203,3 +203,50 @@ def hmm_baum_welch(
     new_T = T_counts / T_counts.sum(axis=1)[:, np.newaxis]
     new_E = E_counts / E_counts.sum(axis=1)[:, np.newaxis]
     return new_pi, new_T, new_E
+
+
+def hmm_viterbi(
+        np.ndarray[double, ndim=1] pi,
+        np.ndarray[double, ndim=2] T,
+        np.ndarray[double, ndim=2] E,
+        np.ndarray[np.int32_t, ndim=1] obs):
+    cdef:
+        np.ndarray[double, ndim=2] viterbi_table
+        np.ndarray[np.int32_t, ndim=1] viterbi_path
+        size_t L, k, state, prev_state, i
+        double max_val, tmp
+        np.int32_t end_state, current_state, max_state
+    L = obs.shape[0]
+    k = T.shape[0]
+    viterbi_table = np.zeros((L, k))
+    for state in range(k):
+        viterbi_table[0, state] = libc.math.log(pi[state] * E[state, obs[0]])
+    for i in range(1, L):
+        for state in range(k):
+            max_val = -1e200
+            for prev_state in range(k):
+                tmp = libc.math.log(T[prev_state, state] * E[state, obs[i]])
+                max_val = max(max_val, viterbi_table[i - 1, prev_state] + tmp)
+            viterbi_table[i, state] = max_val
+    max_val = viterbi_table[L - 1, 0]
+    end_state = 0
+    for state in range(1, k):
+        tmp = viterbi_table[L - 1, state]
+        if tmp > max_val:
+            max_val = tmp
+            end_state = state
+    viterbi_path = np.zeros(L, dtype=np.int32)
+    current_state = end_state
+    for i in range(L-1, 0, -1):
+        tmp = libc.math.log(T[0, current_state] * E[current_state, obs[i]])
+        max_val = viterbi_table[i - 1, 0] + tmp
+        max_state = 0
+        for prev_state in range(1, k):
+            tmp = viterbi_table[i - 1, prev_state]
+            tmp += libc.math.log(T[prev_state, current_state] * E[current_state, obs[i]])
+            if tmp > max_val:
+                max_val = tmp
+                max_state = prev_state
+        viterbi_path[i - 1] = max_state
+        current_state = max_state
+    return viterbi_path
