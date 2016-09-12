@@ -49,3 +49,8 @@ def zip_forward(pi, T, E, sym2pair, preprocessed_obs, orig_nsyms, nsyms):
 def hmm_forward(pi, T, E, obs):
     A, C, logL = c.hmm_forward(pi, T, E, obs)
     return logL
+
+
+def hmm_posterior_decoding(pi, T, E, obs):
+    A, B, _, _ = hmm_forward_backward(pi, T, E, obs)
+    return A * B
