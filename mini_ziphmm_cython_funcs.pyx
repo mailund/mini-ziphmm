@@ -38,10 +38,11 @@ def _forward(
                 s += sym2mat[o, j, k] * res[k]
             tmp[j] = s
             res_scale += s
-        for j in range(N):
-            res[j] = tmp[j] / res_scale
         logL += libc.math.log(res_scale)
         logL += sym2scale[o]
+        res_scale = 1.0 / res_scale
+        for j in range(N):
+            res[j] = tmp[j] * res_scale
     return logL
 
 
