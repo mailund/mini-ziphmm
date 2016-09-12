@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import os, sys
 from time import time
 import numpy as np
@@ -44,8 +46,8 @@ weights = np.array([100,  0.25, 0.0])
 weights /= weights.sum()
 obs = np.array(np.random.choice(range(NSYM), 10*1000*1000, p=weights), dtype=np.int32)
 sim_time = time() - t_0
-print '"Simulation" time: {0}ms'.format(int(1e3*sim_time))
-print
+print('"Simulation" time: {0}ms'.format(int(1e3*sim_time)))
+print()
 
 preprocessing = []
 results = []
@@ -68,9 +70,9 @@ results.append(("mini_ziphmm", logL, time() - t_0))
 try:
     import pyZipHMM
     t_0 = time()
-    i2str = [str(i) for i in xrange(NSYM)]
+    i2str = [str(i) for i in range(NSYM)]
     with open("test.seq", "w") as f:
-        for i in xrange(0, len(obs), 1000):
+        for i in range(0, len(obs), 1000):
             f.write(" ".join(i2str[o] for o in obs[i:i+1000]))
             f.write(" ")
     t_1 = time() - t_0
@@ -83,25 +85,25 @@ try:
 
     t_0 = time()
     zpi = pyZipHMM.Matrix(pi.shape[0], 1)
-    for i in xrange(pi.shape[0]):
+    for i in range(pi.shape[0]):
         zpi[i,0] = pi[i]
     zT = pyZipHMM.Matrix(T.shape[0], T.shape[1])
-    for i in xrange(T.shape[0]):
-        for j in xrange(T.shape[1]):
+    for i in range(T.shape[0]):
+        for j in range(T.shape[1]):
             zT[i,j] = T[i,j]
     zE = pyZipHMM.Matrix(E.shape[0], E.shape[1])
-    for i in xrange(E.shape[0]):
-        for j in xrange(E.shape[1]):
+    for i in range(E.shape[0]):
+        for j in range(E.shape[1]):
             zE[i,j] = E[i,j]
     logL = forwarder.forward(zpi, zT, zE)
     results.append(("pyZipHMM", logL, time() - t_0))
 except:
     pass
 
-print "Preprocessing:"
-print "\n".join(preprocessing)
+print("Preprocessing:")
+print("\n".join(preprocessing))
 
-print
-print "Likelihood calculations:"
+print()
+print("Likelihood calculations:")
 for (name, L, t) in results:
-    print "{0:<20} {1:15.4f} in {2:9.2f}ms".format(name, L, 1e3*t)
+    print("{0:<20} {1:15.4f} in {2:9.2f}ms".format(name, L, 1e3*t))

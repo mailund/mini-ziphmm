@@ -3,17 +3,16 @@ from __future__ import division
 import numpy as np
 from mini_ziphmm_cython_funcs import _forward, preprocess_raw_observations
 
-
 def apply_em_prob(T, E, symbol):
     states = T.shape[0]
     res = np.zeros((states, states))
-    for i in xrange(states):
+    for i in range(states):
         res[i, :] = T[:, i] * E[i, symbol]
     return res
 
 
 def make_em_trans_probs_array(T, E):
-    sym2matrix = [apply_em_prob(T, E, i) for i in xrange(E.shape[1])]
+    sym2matrix = [apply_em_prob(T, E, i) for i in range(E.shape[1])]
     sym2scale = [mat.sum() for mat in sym2matrix]
     sym2matrix = [mat / scale for mat, scale in zip(sym2matrix, sym2scale)]
     sym2scale = [np.log(x) for x in sym2scale]
@@ -32,7 +31,7 @@ def forward(pi, T, E, sym2pair, preprocessed_obs, orig_nsyms, nsyms):
     assert E.shape[1] == orig_nsyms
     assert T.shape[0] == T.shape[1] == E.shape[0] == pi.shape[0]
     sym2mat, sym2scale = make_em_trans_probs_array(T, E)
-    for i in xrange(orig_nsyms, nsyms):
+    for i in range(orig_nsyms, nsyms):
         pair = sym2pair[i]
         left_mat = sym2mat[pair[0]]
         right_mat = sym2mat[pair[1]]

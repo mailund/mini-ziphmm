@@ -88,7 +88,7 @@ def baum_welch(pi, T, E, obs):
     new_pi = zeros(pi.shape)
 
     x = obs[0]
-    for i in xrange(k):
+    for i in range(k):
         tmp = A[0, i]*B[0, i]/C[i]
         new_pi[i] = tmp
         E_counts[i, x] += tmp
