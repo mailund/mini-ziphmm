@@ -3,7 +3,6 @@ from __future__ import print_function
 import os, sys
 from time import time
 import numpy as np
-import mini_hmm_cython
 import mini_ziphmm
 
 # A slightly beefier HMM represeting some isolation model extracted via the
@@ -54,7 +53,7 @@ results = []
 
 # Do a regular hmm forward algorithm on the observations
 t_0 = time()
-_, _, logL = mini_hmm_cython.calc_forward(pi, T, E, obs)
+logL = mini_ziphmm.hmm_forward(pi, T, E, obs)
 results.append(("mini-hmm", logL, time() - t_0))
 
 # Preprocess the observations for use with mini_ziphmm
@@ -64,7 +63,7 @@ preprocessing.append("mini_ziphmm     {0:9.2f}ms".format(1e3*(time() - t_0)))
 
 # Get the likelihood with mini_ziphmm
 t_0 = time()
-logL = mini_ziphmm.forward(pi, T, E, sym2pair, new_obs, NSYM, new_nsyms)
+logL = mini_ziphmm.zip_forward(pi, T, E, sym2pair, new_obs, NSYM, new_nsyms)
 results.append(("mini_ziphmm", logL, time() - t_0))
 
 try:

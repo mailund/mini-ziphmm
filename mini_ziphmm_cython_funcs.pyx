@@ -8,7 +8,7 @@ cimport numpy as np
 cimport libc.math
 
 
-def _forward(
+def zip_forward(
         np.ndarray[double, ndim=1] pi,
         np.ndarray[double, ndim=2] T,
         np.ndarray[double, ndim=2] E,
@@ -98,3 +98,108 @@ def preprocess_raw_observations(
         obs_len = j
         nsyms += 1
     return obs, sym2pair, nsyms
+
+
+def hmm_forward(
+        np.ndarray[double, ndim=1] pi,
+        np.ndarray[double, ndim=2] T,
+        np.ndarray[double, ndim=2] E,
+        np.ndarray[np.int32_t, ndim=1] obs):
+    cdef:
+        size_t k, L, t
+        np.ndarray[double, ndim=2] An
+        np.ndarray[double, ndim=1] C, D
+        double x, C_n, C_n_inv
+        np.int32_t o
+    k = T.shape[0]
+    L = obs.shape[0]
+    An = np.zeros((L, k))
+    C = np.zeros(L)
+    D = np.zeros(k)
+    C_n = 0.0
+    for i in xrange(k):
+        C_n += pi[i] * E[i, obs[0]]
+    C[0] = C_n
+    for i in xrange(k):
+        An[0, i] = pi[i] * E[i, obs[0]] / C_n
+    for t in range(1, L):
+        o = obs[t]
+        for j in xrange(k):
+            x = 0.0
+            for i in xrange(k):
+                x += T[i, j] * An[t - 1, i]
+            D[j] = x * E[j, o]
+        C_n = 0.0
+        for j in xrange(k):
+            C_n += D[j]
+        C[t] = C_n
+        C_n_inv = 1.0 / C_n
+        for j in xrange(k):
+            An[t, j] = D[j] * C_n_inv
+    return An, C, np.log(C).sum()
+
+
+def hmm_forward_backward(
+        np.ndarray[double, ndim=1] pi,
+        np.ndarray[double, ndim=2] T,
+        np.ndarray[double, ndim=2] E,
+        np.ndarray[np.int32_t, ndim=1] obs):
+    cdef:
+        size_t k, L, i, j, n
+        np.ndarray[double, ndim=2] A, B
+        np.ndarray[double, ndim=1] C
+        double x
+        np.int32_t o
+    assert T.shape[0] == T.shape[1]
+    k = T.shape[0]
+    L = obs.shape[0]
+    n = L - 1
+    A, C, logL = hmm_forward(pi, T, E, obs)
+    B = np.zeros((L, k))
+    for i in range(k):
+        B[n, i] = 1.0
+    while n > 0:
+        o = obs[n]
+        for i in range(k):
+            x = 0.0
+            for j in range(k):
+                x += B[n, j] * E[j, o] * T[i, j]
+            B[n-1, i] = x/C[n]
+        n -= 1
+    return A, B, C, logL
+
+
+def hmm_baum_welch(
+        np.ndarray[double, ndim=1] pi,
+        np.ndarray[double, ndim=2] T,
+        np.ndarray[double, ndim=2] E,
+        np.ndarray[np.int32_t, ndim=1] obs):
+    cdef:
+        size_t L, k, i
+        np.ndarray[double, ndim=2] A, B, E_counts, T_counts
+        np.ndarray[double, ndim=1] C, new_pi
+        double logL, tmp, scale
+        np.int32_t o
+    A, B, C, logL = hmm_forward_backward(pi, T, E, obs)
+    T_counts = np.zeros_like(T)
+    E_counts = np.zeros_like(E)
+    new_pi = np.zeros_like(pi)
+
+    L = len(obs)
+    k = T.shape[0]
+    o = obs[0]
+    for i in range(k):
+        tmp = A[0, i]*B[0, i]/C[i]
+        new_pi[i] = tmp
+        E_counts[i, o] += tmp
+    for i in range(1, L):
+        scale = 1.0/C[i]
+        o = obs[i]
+        for j in range(k):
+            tmp = A[i-1,j]
+            for s in range(k):
+                T_counts[j,s] += tmp * T[j, s] * E[s, o] * B[i, s]
+            E_counts[j, o] += A[i, j] * B[i, j]
+    new_T = T_counts / T_counts.sum(axis=1)[:, np.newaxis]
+    new_E = E_counts / E_counts.sum(axis=1)[:, np.newaxis]
+    return new_pi, new_T, new_E

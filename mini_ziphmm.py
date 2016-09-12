@@ -1,9 +1,15 @@
 from __future__ import division
 
 import numpy as np
-from mini_ziphmm_cython_funcs import _forward, preprocess_raw_observations
+import mini_ziphmm_cython_funcs as c
 
-def apply_em_prob(T, E, symbol):
+
+preprocess_raw_observations = c.preprocess_raw_observations
+hmm_baum_welch = c.hmm_baum_welch
+hmm_forward_backward = c.hmm_forward_backward
+
+
+def _apply_em_prob(T, E, symbol):
     states = T.shape[0]
     res = np.zeros((states, states))
     for i in range(states):
@@ -11,26 +17,21 @@ def apply_em_prob(T, E, symbol):
     return res
 
 
-def make_em_trans_probs_array(T, E):
-    sym2matrix = [apply_em_prob(T, E, i) for i in range(E.shape[1])]
+def _make_em_trans_probs_array(T, E):
+    sym2matrix = [_apply_em_prob(T, E, i) for i in range(E.shape[1])]
     sym2scale = [mat.sum() for mat in sym2matrix]
     sym2matrix = [mat / scale for mat, scale in zip(sym2matrix, sym2scale)]
     sym2scale = [np.log(x) for x in sym2scale]
     return sym2matrix, sym2scale
 
 
-def simple_forward(pi, T, E, obs):
-    sym2mat, sym2scale = make_em_trans_probs_array(T, E)
-    return _forward(pi, T, E, obs, np.array(sym2mat), np.array(sym2scale))
-
-
-def forward(pi, T, E, sym2pair, preprocessed_obs, orig_nsyms, nsyms):
+def zip_forward(pi, T, E, sym2pair, preprocessed_obs, orig_nsyms, nsyms):
     assert len(T.shape) == len(E.shape) == 2
     assert len(pi.shape) == 1
     assert nsyms >= orig_nsyms
     assert E.shape[1] == orig_nsyms
     assert T.shape[0] == T.shape[1] == E.shape[0] == pi.shape[0]
-    sym2mat, sym2scale = make_em_trans_probs_array(T, E)
+    sym2mat, sym2scale = _make_em_trans_probs_array(T, E)
     for i in range(orig_nsyms, nsyms):
         pair = sym2pair[i]
         left_mat = sym2mat[pair[0]]
@@ -42,4 +43,9 @@ def forward(pi, T, E, sym2pair, preprocessed_obs, orig_nsyms, nsyms):
         sym2scale.append(scale)
     sym2mat = np.array(sym2mat)
     sym2scale = np.array(sym2scale)
-    return _forward(pi, T, E, preprocessed_obs, sym2mat, sym2scale)
+    return c.zip_forward(pi, T, E, preprocessed_obs, sym2mat, sym2scale)
+
+
+def hmm_forward(pi, T, E, obs):
+    A, C, logL = c.hmm_forward(pi, T, E, obs)
+    return logL
