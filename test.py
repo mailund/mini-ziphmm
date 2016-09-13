@@ -3,7 +3,7 @@ from __future__ import print_function
 import os, sys
 from time import time
 import numpy as np
-import mini_ziphmm
+import ziphmm
 
 # A slightly beefier HMM represeting some isolation model extracted via the
 # code at github.com/mailund/IMCoalHMM/
@@ -53,18 +53,18 @@ results = []
 
 # Do a regular hmm forward algorithm on the observations
 t_0 = time()
-logL = mini_ziphmm.hmm_forward(pi, T, E, obs)
-results.append(("mini-hmm", logL, time() - t_0))
+logL = ziphmm.hmm_forward(pi, T, E, obs)
+results.append(("hmm", logL, time() - t_0))
 
-# Preprocess the observations for use with mini_ziphmm
+# Preprocess the observations for use with ziphmm
 t_0 = time()
-new_obs, sym2pair, new_nsyms = mini_ziphmm.preprocess_raw_observations(obs, NSYM)
-preprocessing.append("mini_ziphmm     {0:9.2f}ms".format(1e3*(time() - t_0)))
+new_obs, sym2pair, new_nsyms = ziphmm.preprocess_raw_observations(obs, NSYM)
+preprocessing.append("ziphmm          {0:9.2f}ms".format(1e3*(time() - t_0)))
 
-# Get the likelihood with mini_ziphmm
+# Get the likelihood with ziphmm
 t_0 = time()
-logL = mini_ziphmm.zip_forward(pi, T, E, sym2pair, new_obs, NSYM, new_nsyms)
-results.append(("mini_ziphmm", logL, time() - t_0))
+logL = ziphmm.zip_forward(pi, T, E, sym2pair, new_obs, NSYM, new_nsyms)
+results.append(("ziphmm", logL, time() - t_0))
 
 try:
     import pyZipHMM

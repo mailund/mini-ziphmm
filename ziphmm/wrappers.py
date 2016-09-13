@@ -1,7 +1,7 @@
 from __future__ import division
 
 import numpy as np
-import mini_ziphmm_cython_funcs as c
+from . import cython_funcs as c
 
 
 preprocess_raw_observations = c.preprocess_raw_observations

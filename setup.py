@@ -2,6 +2,7 @@ from distutils.core import setup
 from Cython.Build import cythonize
 import os
 from codecs import open
+import numpy
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -10,13 +11,15 @@ with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name="mini-ziphmm",
+    name="ziphmm",
     version="0.0.0",
     setup_requires=["cython>=0.x"],
+    packages=["ziphmm"],
     ext_modules=cythonize([
-        "mini_ziphmm_cython_funcs.pyx",
+        "ziphmm/cython_funcs.pyx",
         ]),
-    install_requires=["numpy","scipy"],
+    install_requires=["numpy"],
+    include_dirs=[numpy.get_include()],
 
     # metadata for upload to PyPI
     author="Anders Egerup Halager",
