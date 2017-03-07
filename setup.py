@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import find_packages, setup
 from Cython.Build import cythonize
 import os
 from codecs import open
@@ -12,13 +12,11 @@ with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name="ziphmm",
-    version="0.0.0",
-    setup_requires=["cython>=0.x"],
-    packages=["ziphmm"],
+    version="0.0.9.9000",
+    packages=find_packages(),
     ext_modules=cythonize([
         "ziphmm/cython_funcs.pyx",
         ]),
-    install_requires=["numpy"],
     include_dirs=[numpy.get_include()],
 
     # metadata for upload to PyPI

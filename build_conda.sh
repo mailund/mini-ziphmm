@@ -22,7 +22,7 @@ conda install anaconda-client conda-build
 conda skeleton pypi --pypi-url $PYPI_URL ziphmm
 conda build --python $TRAVIS_PYTHON_VERSION ziphmm/
 mkdir /tmp/builds
-conda convert --platform all /tmp/miniconda/conda-bld/linux-64/gwf-*-*_0.tar.bz2 -o /tmp/builds
+conda convert --platform all /tmp/miniconda/conda-bld/linux-64/ziphmm-*-*_0.tar.bz2 -o /tmp/builds
 
 for f in $(ls /tmp/builds/*/*.tar.bz2); do
     anaconda -t $ANACONDA_TOKEN upload $f

@@ -2,3 +2,5 @@
 *.pyc
 build/
 ziphmm/cython_funcs.so
+.coverage
+ziphmm.egg-info/

@@ -1,5 +1,14 @@
-default:
-	#pep8 mini_*.py
-	python setup.py build_ext --inplace
-clean:
-	rm -rf build __pycache__ *.so mini_ziphmm_cython_funcs.c mini_ziphmm.egg-info *.pyc
+.PHONY: init test lint coverage
+
+init:
+	pip install -r requirements.txt
+	pip install -e .
+
+test:
+	coverage run --source ziphmm setup.py test
+
+lint:
+	flake8
+
+coverage:
+	coverage report
