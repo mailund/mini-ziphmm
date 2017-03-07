@@ -7,12 +7,12 @@ import numpy
 here = os.path.abspath(os.path.dirname(__file__))
 
 # Get the long description from the README file
-with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
+with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
     name="ziphmm",
-    version="0.0.9.9004",
+    version="0.0.9.9005",
     packages=find_packages(),
     ext_modules=cythonize([
         "ziphmm/cython_funcs.pyx",
