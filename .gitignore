@@ -1,3 +1,4 @@
 *.c
 *.pyc
 build/
+ziphmm/cython_funcs.so
