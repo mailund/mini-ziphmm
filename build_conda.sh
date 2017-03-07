@@ -19,7 +19,7 @@ conda update -q conda
 conda install anaconda-client conda-build
 
 # Build skeleton from PyPI package...
-conda skeleton pypi --pypi-url $PYPI_URL ziphmm
+conda skeleton pypi ziphmm
 conda build --python $TRAVIS_PYTHON_VERSION ziphmm/
 mkdir /tmp/builds
 conda convert --platform all /tmp/miniconda/conda-bld/linux-64/ziphmm-*-*_0.tar.bz2 -o /tmp/builds
