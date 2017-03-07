@@ -18,6 +18,5 @@ deploy:
   on:
     tags: true
     branch: master
-    repo: mailund/ziphmm
     distributions: sdist bdist bdist_wheel
 after_deploy: bash build_conda.sh
