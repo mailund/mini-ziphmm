@@ -12,7 +12,7 @@ with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name="ziphmm",
-    version="0.0.9.9003",
+    version="0.0.9.9004",
     packages=find_packages(),
     ext_modules=cythonize([
         "ziphmm/cython_funcs.pyx",
