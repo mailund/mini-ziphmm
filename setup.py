@@ -12,7 +12,7 @@ with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name="ziphmm",
-    version="0.1.1b1",
+    version="0.1.1b2",
     packages=find_packages(),
     ext_modules=cythonize([
         "ziphmm/cython_funcs.pyx",
@@ -24,7 +24,7 @@ setup(
         'flake8',
         'cython',
         'numpy'
-    ]
+    ],
 
     # metadata for upload to PyPI
     author="Anders Egerup Halager",
