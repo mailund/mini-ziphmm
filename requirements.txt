@@ -1,5 +1,5 @@
-coverage==4.2
-flake8==3.0.4
-cython>=0.x
+coverage
+flake8
+cython
 numpy
 
