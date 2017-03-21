@@ -3,9 +3,14 @@ sudo: required
 python:
 - '2.7'
 - '3.5'
+env:
+- PYPI_URL=https://pypi.python.org/pypi
 install:
 - make init
-- pip install coveralls==1.1
+- pip install --upgrade pip
+- pip install coveralls==1.*
+- pip install -r requirements.txt
+- pip install .
 script: make test
 after_success:
 - coveralls
@@ -13,6 +18,8 @@ after_success:
 deploy:
   provider: pypi
   user: mailund
+  skip_cleanup: true
+  skip_upload_docs: true
   password:
     secure: "IqkA9OhC6jXuRUBno3PfLk7KDp8qCu4BCI/oBK1XN+XkOewaTBtTlwHhE3/JV8niRxqnrhWM/0HzSaE3GTWznc9BCw6LocLqAVO05WQlM5AXZKVpdViSwbdINCboz9kNmoST2hNZFJLe9bu8qODgaLf9DT7DK4EZEFm4OtjlxlUtRYUG3VnFGAJ3vcubfOWa/8jlqvt+nP5ihE2HIr654HaL7UkhSchgCXyVmmbIPLLJt/D/ORT+gnItyhUHs7YvokK1H9fylVnLUpv53V8bbAYoqVjeU7q35JMSiRxi4wbYZ/2p9pceLiVjFn8ho2OZ+2qpB/0cOa2gymkpD9twWag6moU9wf/Y2FM+MgE3l0iBqGE1YWq+z3rmwLKYgKsR3ZjrWSaeSYQHqnDGo27sg1hhPsLpWUIinI7CFANijnKL84YVrvcZTlQT2pFIp8pyVkSVuKsShDExCPuFgoEgiyqCyyzzON/+kY98ogZbCpN1Vdgf5sStF68VqFb+FtQx/2KmTLJJiPV1L8SW4nh27AjBZEwpn3HjK8usU8UO9FtkKs6aI30xeuQFpJb9U0v3oOaRf0hLD+me+AolsTSoD6TDbFYmOWHfLtN06Vl8ebctQ/DwO/Ig+ZHw5QZ4uoAFIrSH1oZyboqU6ulE3fDdyxgQOKiTuzUbFrdTghRRhC0="
   on:
