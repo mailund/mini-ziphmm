@@ -17,6 +17,7 @@ conda config --set always_yes yes --set changeps1 no
 conda config --add channels mailund
 conda update -q conda
 conda install anaconda-client conda-build
+conda install cython
 
 # Build skeleton from PyPI package...
 conda skeleton pypi ziphmm
