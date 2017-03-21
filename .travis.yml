@@ -19,3 +19,4 @@ deploy:
     tags: true
     branch: master
     distributions: sdist bdist bdist_wheel
+after_deploy: bash build_conda.sh
