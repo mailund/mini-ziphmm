@@ -19,6 +19,13 @@ setup(
         ]),
     include_dirs=[numpy.get_include()],
 
+    install_requires=[
+        'coverage',
+        'flake8',
+        'cython',
+        'numpy'
+    ]
+
     # metadata for upload to PyPI
     author="Anders Egerup Halager",
     author_email="aeh@birc.au.dk",
